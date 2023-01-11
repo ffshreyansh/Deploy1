@@ -1,0 +1,19 @@
+<h1 class="mt-4">Dashboard</h1>
+<p class="lead mb-3">Welcome <%= name %>  </p>
+<form style="padding: 10% 25%;" action="/" method="post">
+    <div class="form-group" style="margin-bottom: 2%;">
+        <label for="nameInput">Name</label>
+        <input type="text" name="name" class="form-control" id="nameInput" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+        <label for="numbersInput">Numbers</label>
+        <div class="input-group-append input-group "></div>
+        <div class="input-group mb-3">
+            <input type="text" name="number" class="form-control" pattern="\d+(,\s*\d+)*" placeholder="Add Numbers" aria-label="Numbers"
+                aria-describedby="basic-addon2">
+            <!-- <button class="input-group-button btn btn-dark" type="button" id="add-btn">Add</button> -->
+        </div>
+        <button type="submit" class="btn btn-dark" style="margin-top: 2%;">Submit</button>
+        <button type="reset" class="btn btn-danger" style="margin-top: 2%;">Reset</button>
+</form>
+<a href="/users/logout" class="btn btn-secondary">Logout</a>
