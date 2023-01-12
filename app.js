@@ -6,6 +6,8 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const { default: puppeteer } = require("puppeteer");
+
+
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 let token = 10000;
@@ -110,7 +112,8 @@ MongoClient.connect(uri, { useNewUrlParser: true }, function (err, client) {
                 </body>
               </html>
             `;
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({args: ['--no-sandbox']});
+
             const page = await browser.newPage();
             await page.setContent(html);
             const buffer = await page.pdf({ format: 'A4' });
@@ -160,7 +163,8 @@ MongoClient.connect(uri, { useNewUrlParser: true }, function (err, client) {
 `;
 
             //Generating PDF
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({args: ['--no-sandbox']});
+
             const page = await browser.newPage();
             await page.setContent(html);
             const buffer = await page.pdf({ format: 'A4' });
