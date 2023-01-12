@@ -15,15 +15,30 @@
     <div class="position-absolute top-50 start-50 translate-middle">
     <form style="margin-bottom: 50px;" action="/pdf/admin" method="post">
 
+        
         <button class="btn btn-dark" type="submit" >Admin's pdf</button>
         <!-- <div class="btn btn-dark ">Admin's pdf</div> -->
         
 
     </form>
-    <!-- <form action="/pdf/filtered" method="post" >
-        <input type="text" name="filter" placeholder="Enter filter criteria (e.g. { name: 'c' })" required>
+    <form action="/pdf/filtered" method="post" >
+        <input type="text" name="name" placeholder="Enter name" required>
         <button class="btn btn-dark" type="submit">Generate PDF</button>
-      </form> -->
+</form>
+
+<!-- <form action="/pdf/date" method="post" style="margin-top: 20px;">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" required>
+    <br>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" name="endDate" required>
+    <br>
+    <input type="submit" class="btn btn-dark"    value="Generate PDF">
+</form> -->
+
     </div>
     
 </body>
