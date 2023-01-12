@@ -15,20 +15,22 @@
     <div class="position-absolute top-50 start-50 translate-middle">
     <form style="margin-bottom: 50px;" action="/pdf/admin" method="post">
 
-        
+        <h2>All Data</h2>
         <button class="btn btn-dark" type="submit" >Admin's pdf</button>
         <!-- <div class="btn btn-dark ">Admin's pdf</div> -->
         
 
     </form>
     <form action="/pdf/filtered" method="post" >
+        <h2>Filter by Name</h2>
         <input type="text" name="name" placeholder="Enter name" required>
         <button class="btn btn-dark" type="submit">Generate PDF</button>
 </form>
 
-<!-- <form action="/pdf/date" method="post" style="margin-top: 20px;">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
+<form action="/pdf/date" method="post" style="margin-top: 20px;">
+    <!-- <label for="name">Name:</label> -->
+    <!-- <input type="text" id="name" name="name2" required> -->
+    <h2>Filter By Date</h2>
     <br>
     <label for="startDate">Start Date:</label>
     <input type="date" id="startDate" name="startDate" required>
@@ -37,7 +39,7 @@
     <input type="date" id="endDate" name="endDate" required>
     <br>
     <input type="submit" class="btn btn-dark"    value="Generate PDF">
-</form> -->
+</form>
 
     </div>
     

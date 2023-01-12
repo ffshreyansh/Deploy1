@@ -7,7 +7,8 @@ const session = require('express-session');
 const bodyParser = require("body-parser");
 const { default: puppeteer } = require("puppeteer");
 
-
+var moment = require('moment'); // require
+moment().format(); 
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 let token = 10000;
@@ -59,7 +60,8 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
   
       // Add the date field with the current date
       const date = new Date();
-  
+      
+     
       db.collection('users').findOne({ name: name }, function (err, result) {
           if (err) {
               console.log(err);
@@ -77,11 +79,12 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
                   console.log('Data added to the collection');
                   res.redirect('/success');
               });
+
           }
       });
   
   });
-  
+    
         //Using Puppeteer to Generate Name Filtered PDF=====================================
 
         app.post('/pdf/filtered', async (req, res) => {
@@ -181,65 +184,71 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
 
         });
 
+ //=========================Filter PDF by DATE===============================//
+        
+        app.post('/pdf/date', async (req, res) => {
 
-        //=========================Filter PDF by DATE===============================//
-        
-      //   app.post('/pdf/date', async (req, res) => {
-      //     let startDate = new Date(req.body.startDate);
-      //     let endDate = new Date(req.body.endDate);
-      //     startDate = startDate.toISOString();
-      //     endDate = endDate.toISOString();
-      //     // Get the filter criteria from the query parameters
-      //     const filter = { 
-      //       name: req.body.name, 
-      //       date: { 
-      //           $gte: new Date(req.body.startDate), 
-      //           $lte: new Date(req.body.endDate) 
-      //       }
-      //   };
-        
+
+          let startDate = new Date(req.body.startDate);
+          let endDate = new Date(req.body.endDate); 
+        // //   console.log(startDate)
+        //   startDate = startDate.toISOString();
+        //   endDate = endDate.toISOString();
+         
+        //   // Get the filter criteria from the query parameters
+         
+        //   const filter = { 
+        //     date: { 
+        //         $gte: startDate, 
+        //         $lte: endDate
+        //     }
+        // };
+        const collection = db.collection('users');
+        // const filter = {};
+        // const data = await collection.find(filter).toArray();
+        const data = await collection.find().toArray();
       
-      //     // Find the documents that match the filter criteria
-      //     const collection = db.collection('users');
-      //     const data = await collection.find(filter).toArray();
+          // Find the documents that match the filter criteria
+        //   const collection = db.collection('users');
+        //   const data = await collection.find(filter).toArray();
+     
+          // Generate the PDF
+          const html = `
+              <html>
+                  <body>
+                      <table>
+                          <thead>
+                              <tr>                                  
+                              </tr>
+                          </thead>
+                          <tbody>
+                              ${data.map(row => `
+                                  ${row.number.map((number,i) => `
+                                      <tr>
+                                          ${i==0 ? `<td>${row.name}</td>` : `<td></td>`}
+                                      </tr>
+                                      <tr>
+                                          <td>${number}</td>
+                                      </tr>
+                                  `).join('')}
+                              `).join('')}
+                          </tbody>
+                      </table>
+                  </body>
+              </html>
+          `;
+           
+          const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+          const page = await browser.newPage();
+          await page.setContent(html);
+          const buffer = await page.pdf({ format: 'A4' });
+          await browser.close();
       
-      //     // Generate the PDF
-      //     const html = `
-      //         <html>
-      //             <body>
-      //                 <table>
-      //                     <thead>
-      //                         <tr>
-                                  
-      //                         </tr>
-      //                     </thead>
-      //                     <tbody>
-      //                         ${data.map(row => `
-      //                             ${row.number.map((number,i) => `
-      //                                 <tr>
-      //                                     ${i==0 ? `<td>${row.name}</td>` : `<td></td>`}
-      //                                 </tr>
-      //                                 <tr>
-      //                                     <td>${number}</td>
-      //                                 </tr>
-      //                             `).join('')}
-      //                         `).join('')}
-      //                     </tbody>
-      //                 </table>
-      //             </body>
-      //         </html>
-      //     `;
-      //     const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-      //     const page = await browser.newPage();
-      //     await page.setContent(html);
-      //     const buffer = await page.pdf({ format: 'A4' });
-      //     await browser.close();
-      
-      //     // Send the PDF to the client
-      //     res.setHeader('Content-Type', 'application/pdf');
-      //     res.setHeader('Content-Disposition', `attachment; filename="${req.body.name}-${new Date().toLocaleDateString()}.pdf"`);
-      //     res.send(buffer);
-      // });
+          // Send the PDF to the client
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `attachment; filename="${startDate+" to "+ endDate}-${new Date().toLocaleDateString()}.pdf"`);
+          res.send(buffer);
+      });
       
 
         
