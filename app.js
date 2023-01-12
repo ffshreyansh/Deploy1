@@ -39,7 +39,7 @@ mongoose.connect(db, {useNewUrlParser: true})
 
 //Pushing the Data into Mongo DB ====================================================================
 
-MongoClient.connect(uri, { useNewUrlParser: true }, function (err, client) {
+MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
     if (err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n', err);
     }
