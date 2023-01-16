@@ -23,3 +23,19 @@ h4 {
 {
     --bs-btn-padding-x: 4rem;
 } */
+
+.form-control{
+    height: 40px;
+}
+/* .navbar{
+    margin-bottom: 50px;
+} */
+table{
+    position: relative;
+    top: 120px;
+}
+thead{
+    background-color: black;
+    color: white;
+    border: 2px solid black;
+}

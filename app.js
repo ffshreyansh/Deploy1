@@ -13,9 +13,9 @@ const app = express();
 const MongoClient = require('mongodb').MongoClient;
 let token = 10000;
 app.use(bodyParser.urlencoded({ extended: false }));
-const uri = "mongodb+srv://stickman:shreyansh@stickman.jtwgqqr.mongodb.net/?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://stickman:shreyansh@stickman.jtwgqqr.mongodb.net/?retryWrites=true&w=majority";
 
-
+let datas=[];
 
 
 //Passport Config
@@ -72,69 +72,73 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
           } else {
   
               // Insert the data into the database
-              db.collection('users').insertOne({ name: name, number: num, date: date }, function (err, result) {
+              db.collection('users').insertOne({ name: name, number: num, date: date}, function (err, result) {
                   if (err) {
                       console.log(err);
                   }
                   console.log('Data added to the collection');
-                  res.redirect('/success');
+                  res.redirect('/data');
               });
 
           }
       });
   
   });
+
+
     
         //Using Puppeteer to Generate Name Filtered PDF=====================================
+        app.post('/pdf/date', async (req, res) => {
+            const startDate = req.body.startDate;
+            const endDate = req.body.endDate;
+          
+            //query mongodb to get the data
+            const collection = db.collection('users');
+            const filter = {date: {$gte: moment(startDate).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ'), $lt: moment(endDate).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')}};
 
-        app.post('/pdf/filtered', async (req, res) => {
-          // Get the filter criteria from the query parameter
-          const filter ={name: req.body.name};
-      
-          // Find the documents that match the filter criteria
-          const collection = db.collection('users');
-          const data = await collection.find(filter).toArray();
-      
-          // Generate the PDF as before
-          const html = `
-        <html>
-            <body>
+            console.log(filter)
+            const filteredData = await collection.find(filter).toArray();
+            
+          
+            //HTML for the PDF
+            const html = `
+            <html>
+              <body>
+                <h1>Data from the database</h1>
                 <table>
-                    <thead>
-                        <tr>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${data.map(row => `
-                            ${row.number.map((number,i) => `
-                                <tr>
-                                    ${i==0 ? `<td>${row.name}</td>` : `<td></td>`}
-                                </tr>
-                                <tr>
-                                    <td>${number}</td>
-                                </tr>
-                            `).join('')}
-                        `).join('')}
-                    </tbody>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Number</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${filteredData.map(row => `
+                      <tr>
+                        <td>${row.name}</td>
+                        <td>${row.number}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
                 </table>
-            </body>
-        </html>
-    `;
-          const browser = await puppeteer.launch({args: ['--no-sandbox']});
-          const page = await browser.newPage();
-          await page.setContent(html);
-          const buffer = await page.pdf({ format: 'A4' });
-          await browser.close();
-      
-          // Send the PDF to the client
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', `attachment; filename="${req.body.name}-${new Date().toLocaleDateString()}.pdf"`);
-  
-          res.send(buffer);
-      });
-      
-
+              </body>
+            </html>
+          `;
+          
+            //Generating PDF
+            const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+            const page = await browser.newPage();
+            await page.setContent(html);
+            const pdf = await page.pdf({ format: 'A4' });
+            await browser.close();
+          
+            // send the PDF as a response
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=data.pdf');
+            res.send(pdf);
+          });
+          
+        
         // Using Puppeteer for Admin's PDF generation==================================================================
 
         app.post('/pdf/admin', async (req, res) => {
@@ -186,97 +190,50 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
 
  //=========================Filter PDF by DATE===============================//
         
-        app.post('/pdf/date', async (req, res) => {
-
-
-          let startDate = new Date(req.body.startDate);
-          let endDate = new Date(req.body.endDate); 
-        // //   console.log(startDate)
-        //   startDate = startDate.toISOString();
-        //   endDate = endDate.toISOString();
-         
-        //   // Get the filter criteria from the query parameters
-         
-        //   const filter = { 
-        //     date: { 
-        //         $gte: startDate, 
-        //         $lte: endDate
-        //     }
-        // };
-        const collection = db.collection('users');
-        // const filter = {};
-        // const data = await collection.find(filter).toArray();
-        const data = await collection.find().toArray();
       
-          // Find the documents that match the filter criteria
-        //   const collection = db.collection('users');
-        //   const data = await collection.find(filter).toArray();
-     
-          // Generate the PDF
-          const html = `
-              <html>
-                  <body>
-                      <table>
-                          <thead>
-                              <tr>                                  
-                              </tr>
-                          </thead>
-                          <tbody>
-                              ${data.map(row => `
-                                  ${row.number.map((number,i) => `
-                                      <tr>
-                                          ${i==0 ? `<td>${row.name}</td>` : `<td></td>`}
-                                      </tr>
-                                      <tr>
-                                          <td>${number}</td>
-                                      </tr>
-                                  `).join('')}
-                              `).join('')}
-                          </tbody>
-                      </table>
-                  </body>
-              </html>
-          `;
-           
-          const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-          const page = await browser.newPage();
-          await page.setContent(html);
-          const buffer = await page.pdf({ format: 'A4' });
-          await browser.close();
-      
-          // Send the PDF to the client
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', `attachment; filename="${startDate+" to "+ endDate}-${new Date().toLocaleDateString()}.pdf"`);
-          res.send(buffer);
+
+      app.get('/data', (req, res) => {
+        db.collection('users').find({}).toArray((err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.render('data', { users: data });
+          }
+        });
       });
       
-
-        
-
-
-    
-
 })
 
+app.get('/print/:name/:numbers', async (req, res) => {
+    const name = req.params.name;
+    const numbers = req.params.numbers;
+  
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+  
+    // Use the `page.setContent()` method to set the content of the page
+    // In this case we are using a simple HTML template with the name and numbers data
+    await page.setContent(`
+        <h1>${name}</h1>
+        <p>Numbers: ${numbers}</p>
 
-
-
-
-
-
-    app.get('/success', (req, res) => {
-        res.sendFile(__dirname + '/success.html');
+    `);
+  
+    // Use the `page.pdf()` method to generate a PDF of the page
+    // You can also pass options to customize the PDF, such as the file name, paper size, etc.
+    const pdf = await page.pdf({
+        format: 'A4',
+        printBackground: true,
     });
 
-
-    // app.get('/', (req, res) => {
-    //     res.sendFile(__dirname + "/dashboard.ejs")
-    // })
-
-
-
-
-
+    res.set({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${name}-${new Date().toLocaleDateString()}.pdf`,
+    });
+  
+    // Send the PDF file as the response
+    res.send(pdf);
+});
 
 
 
@@ -313,6 +270,10 @@ app.use((req, res, next) => {
 //Routes
 app.use('/', require("./routes/index.js"));
 app.use('/users', require("./routes/users.js"));
+
+
+
+
 
 
 

@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg bg-dark fixed-top "data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><h2>Inserted Datas</h2></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-middle">
+            <form class="d-flex" action="/pdf/date" method="post" >
+                <input class="form-control me-2" type="date" placeholder="Search" id="startDate" name="startDate" required>
+                <input class="form-control me-2" type="date" placeholder="Search" id="endDate" name="endDate" required>
+                <button class="btn btn-outline-light" type="submit">Download</button>
+              </form>
+              <form action="/pdf/admin" method="post">
+                <button class="btn btn-light" style="margin-left: 5px;" type="submit" >Admin Data</button>                   
+            </form>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </nav>
+
+
+
+
+<!-- <div class="d-flex mx-auto" style="margin-bottom: 50px;">
+    
+    <form action="/pdf/date" method="post" style="margin-top: 20px; margin-left: auto;" class="d-flex text-center">
+        
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required>
+        <br>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate" required>
+        <br>
+        <button type="submit" class="btn btn-dark">Data by Date</button>
+    </form>
+</div> -->
+
+<table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Numbers</th>
+        <th>Date</th>
+        <th>PDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(function(user) { %>
+      <tr>
+        <td style="font-weight: 600; padding-right: 10px;"><%= user.name %></td>
+        <td style="padding-right: 25px;"><%= user.number %></td>
+        <td style="padding-right: 15px;"><%= user.date %></td>
+        <td><a class="btn btn-dark" href="/print/<%= user.name %>/<%= user.number %>" download>Print</a></td>
+
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  
+
+
+  
+  
+  
