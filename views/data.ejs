@@ -23,21 +23,6 @@
 
 
 
-
-<!-- <div class="d-flex mx-auto" style="margin-bottom: 50px;">
-    
-    <form action="/pdf/date" method="post" style="margin-top: 20px; margin-left: auto;" class="d-flex text-center">
-        
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate" name="startDate" required>
-        <br>
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate" name="endDate" required>
-        <br>
-        <button type="submit" class="btn btn-dark">Data by Date</button>
-    </form>
-</div> -->
-
 <table>
     <thead>
       <tr>
@@ -52,7 +37,15 @@
       <tr>
         <td style="font-weight: 600; padding-right: 10px;"><%= user.name %></td>
         <td style="padding-right: 25px;"><%= user.number %></td>
-        <td style="padding-right: 15px;"><%= user.date %></td>
+        <td style="padding-right: 15px;">
+            <% if(user.date){ %>
+                <%= user.date.toLocaleDateString() %>
+            <% } else { %>
+                N/A
+            <% } %>
+        </td>
+        
+
         <td><a class="btn btn-dark" href="/print/<%= user.name %>/<%= user.number %>" download>Print</a></td>
 
       </tr>

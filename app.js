@@ -60,7 +60,7 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
   
       // Add the date field with the current date
       const date = new Date();
-      
+      const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
      
       db.collection('users').findOne({ name: name }, function (err, result) {
           if (err) {
@@ -72,7 +72,7 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
           } else {
   
               // Insert the data into the database
-              db.collection('users').insertOne({ name: name, number: num, date: date}, function (err, result) {
+              db.collection('users').insertOne({ name: name, number: num, date: dateOnly}, function (err, result) {
                   if (err) {
                       console.log(err);
                   }
@@ -85,8 +85,9 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
   
   });
 
+  
 
-    
+   
         //Using Puppeteer to Generate Name Filtered PDF=====================================
         app.post('/pdf/date', async (req, res) => {
             const startDate = req.body.startDate;
@@ -94,11 +95,12 @@ MongoClient.connect(db, { useNewUrlParser: true }, function (err, client) {
           
             //query mongodb to get the data
             const collection = db.collection('users');
-            const filter = {date: {$gte: moment(startDate).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ'), $lt: moment(endDate).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')}};
-
-            console.log(filter)
-            const filteredData = await collection.find(filter).toArray();
+            const filter = {date: {$gte: new Date(startDate).toLocaleDateString(), $lt: new Date(endDate).toLocaleDateString()}};
             
+            const filteredData = await collection.find(filter).toArray();
+            console.log(filteredData);
+            
+
           
             //HTML for the PDF
             const html = `
@@ -234,6 +236,12 @@ app.get('/print/:name/:numbers', async (req, res) => {
     // Send the PDF file as the response
     res.send(pdf);
 });
+
+
+
+
+
+
 
 
 
