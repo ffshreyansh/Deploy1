@@ -217,7 +217,7 @@ app.get('/print/:name/:numbers', async (req, res) => {
     // In this case we are using a simple HTML template with the name and numbers data
     await page.setContent(`
         <h1>${name}</h1>
-        <p>Numbers: ${numbers}</p>
+        <p>${numbers}</p>
 
     `);
   

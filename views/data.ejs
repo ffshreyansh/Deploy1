@@ -6,17 +6,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-middle">
-            <form class="d-flex" action="/pdf/date" method="post" >
-                <input class="form-control me-2" type="date" placeholder="Search" id="startDate" name="startDate" required>
-                <input class="form-control me-2" type="date" placeholder="Search" id="endDate" name="endDate" required>
-                <button class="btn btn-outline-light" type="submit">Download</button>
-              </form>
               <form action="/pdf/admin" method="post">
-                <button class="btn btn-light" style="margin-left: 5px;" type="submit" >Admin Data</button>                   
+                <button class="btn btn-light" style="margin-right: 25px;" type="submit" >Admin Data</button>                   
             </form>
-          
         </ul>
-        
+        <input type="text"id="filterDate" class="inptDate" placeholder="eg: DD/MM/YYYY">
+<button onclick="filterByDate()" class="btn btn-light">Filter by Date</button>
+
       </div>
     </div>
   </nav>
@@ -34,17 +30,16 @@
     </thead>
     <tbody>
       <% users.forEach(function(user) { %>
-      <tr>
-        <td style="font-weight: 600; padding-right: 10px;"><%= user.name %></td>
-        <td style="padding-right: 25px;"><%= user.number %></td>
-        <td style="padding-right: 15px;">
+      <tr class="userRows">
+        <td style="font-weight: 600; padding-right: 10px;" class="userName"><%= user.name %></td>
+        <td style="padding-right: 25px;" class="userNumber"><%= user.number %></td>
+        <td style="padding-right: 15px;" class="userDate">
             <% if(user.date){ %>
-                <%= user.date.toLocaleDateString() %>
+                <%= user.date.toLocaleDateString()%>
             <% } else { %>
                 N/A
             <% } %>
         </td>
-        
 
         <td><a class="btn btn-dark" href="/print/<%= user.name %>/<%= user.number %>" download>Print</a></td>
 
@@ -53,8 +48,20 @@
     </tbody>
   </table>
   
+<script>
 
-
-  
+function filterByDate() {
+  var inputDate = new Date(document.getElementById("filterDate").value);
+  var userRows = document.getElementsByClassName("userRows");
+  for (var i = 0; i < userRows.length; i++) {
+    var userDate = new Date(userRows[i].getElementsByClassName("userDate")[0].innerHTML);
+    if (userDate.toString() === inputDate.toString()) {
+      userRows[i].style.display = "";
+    } else {
+      userRows[i].style.display = "none";
+    }
+  }
+}
+</script>
   
   

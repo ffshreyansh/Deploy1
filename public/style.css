@@ -39,3 +39,8 @@ thead{
     color: white;
     border: 2px solid black;
 }
+.inptDate{
+    margin-right: 12px;
+    padding: 5px;
+    border-radius: 10px;
+}
